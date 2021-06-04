@@ -152,12 +152,15 @@ func arp_interface( interface_name string ) ( arp_result ArpResult ) {
 		case "windows":
 			arp_string := exec_process( `C:\Windows\System32\cmd.exe` , "/c" , "arp -a" )
 			lines := strings.Split( arp_string , "\n" )
+			// substitutions := []string{ "-" }
 			for _ , line := range lines {
 				if strings.Contains( line , "dynamic" ) == false { continue }
 				items := strings.Split( line , " " )
 				items = _remove_empty_strings( items )
 				if len( items ) < 3 { continue }
-				arp_result[items[ 0 ]] = items[ 1 ]
+				ip_address := items[ 0 ]
+				mac_address := strings.Join( strings.Split( items[ 1 ] , "-" ) , ":" )
+				arp_result[ip_address] = mac_address
 			}
 	}
 	return
