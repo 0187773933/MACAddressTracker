@@ -133,8 +133,17 @@ func RedisKeyDelete( redis redis.Manager , redis_key string ) {
 	}
 }
 
+func JSONStringify( object interface{} ) ( json_string string ) {
+	json_marshal_result , json_marshal_error := json.Marshal( object )
+	if json_marshal_error != nil { panic( json_marshal_error ) }
+	json_string = string( json_marshal_result )
+	return
+}
+
 type MacAddressRecord struct {
 	CurrentTimeString string `json:"current_time_string"`
+	Records []string `json:"records"`
+	Transitions []string `json:"transitions"`
 }
 func TrackChanges( config ConfigFile , network_map [][2]string ) {
 	fmt.Println( "Tracking Changes" )
@@ -145,14 +154,34 @@ func TrackChanges( config ConfigFile , network_map [][2]string ) {
 	network_latest_set_key := fmt.Sprintf( "%sNETWORK.%s.IPS.LATEST" , config.Redis.Prefix , config.LocationName )
 	RedisKeyDelete( redis , network_latest_set_key )
 
+	all_seen_at_time := time.Now()
+	all_seen_at_time_string := GetFormattedTimeString( all_seen_at_time )
 	for index := range network_map {
 		ip := network_map[index][0]
 		mac := network_map[index][1]
 		mac_hostname_key := fmt.Sprintf( "%sNETWORK.%s.%s" , config.Redis.Prefix , config.LocationName , mac )
 		fmt.Printf( "%d === %s === %s === %s\n" , index , ip , mac , mac_hostname_key )
 
-		// Build A DB Item with MetaData and Stuff
+		// Build A DB Item with MetaData and Stuff , Or Update Previously Existing Entry
+		db_item_key := fmt.Sprintf( "%sSEEN.%s" , config.Redis.Prefix , mac )
+		var record MacAddressRecord
+		if RedisKeyExists( redis , db_item_key ) == true {
+			existing_db_entry_json := redis.Get( db_item_key )
+			json_unmarshal_error := json.Unmarshal( []byte( existing_db_entry_json ) , &record )
+			if json_unmarshal_error != nil { panic( json_unmarshal_error ) }
+			// Perform Update
 
+		} else {
+			record = MacAddressRecord{}
+		}
+		record.CurrentTimeString = all_seen_at_time_string
+		fmt.Println( db_item_key )
+		// json_marshal_result , json_marshal_error := json.Marshal( test_data )
+		// fmt.Println( reflect.TypeOf( json_marshal_result ) )
+		// if json_marshal_error != nil { panic( json_marshal_error ) }
+		// json_string := string( json_marshal_result )
+		json_string := JSONStringify( record )
+		redis.Set( db_item_key , json_string )
 
 		// 1.) Store Snapshot as Set of 'Latest' IP's
 		redis.Redis.SAdd( ctx , network_latest_set_key , ip )
