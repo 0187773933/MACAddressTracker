@@ -134,7 +134,20 @@ func arp_interface( interface_name string ) ( arp_result ArpResult ) {
 				if items[1] == "<incomplete>" { continue }
 				if strings.Contains( items[0] , "(" ) == false { continue }
 				ip_address := strings.Split( strings.Split( items[0] , "(" )[1] , ")" )[0]
-				arp_result[ip_address] = items[1]
+				// arp_result[ip_address] = items[1]
+				mac_parts := strings.Split( items[ 1 ] , ":" )
+				fixed_mac_parts := []string{}
+				for index := range mac_parts {
+					// If its a number , 2 pad it
+					testnum , testnum_err := strconv.Atoi( mac_parts[ index ] )
+					if testnum_err == nil {
+						fixed_mac_parts = append( fixed_mac_parts , fmt.Sprintf( "%02d" , testnum ) )
+					} else {
+						fixed_mac_parts = append( fixed_mac_parts , mac_parts[ index ] )
+					}
+				}
+				mac_address := strings.Join( fixed_mac_parts , ":" )
+				arp_result[ip_address] = mac_address
 			}
 		case "darwin":
 			arp_string := exec_process( "/bin/bash" , "-c" , fmt.Sprintf( "arp -na -i %s | awk '{{print $2,$4}}'" , interface_name ) )
