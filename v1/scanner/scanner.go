@@ -115,43 +115,58 @@ func nmap( gateway_ip string ) ( result string ) {
 	return result
 }
 
-func arp_interface( interface_name string ) ( result string ) {
-	result = "failed"
+func _remove_empty_strings( items []string ) ( results []string ) {
+	for _ , item := range items {
+		if item == "" { continue }
+		results = append( results , item )
+	}
+	return
+}
+func arp_interface( interface_name string ) ( arp_result ArpResult ) {
+	arp_result = ArpResult{}
 	switch runtime.GOOS {
 		case "linux":
-			result := exec_process( "/bin/bash" , "-c" , fmt.Sprintf( "arp -na -i %s | awk '{{print $2,$4}}'" , interface_name ) )
-			return result
+			arp_string := exec_process( "/bin/bash" , "-c" , fmt.Sprintf( "arp -na -i %s | awk '{{print $2,$4}}'" , interface_name ) )
+			lines := strings.Split( arp_string , "\n" )
+			for _ , line := range lines {
+				items := strings.Split( line , " " )
+				if len( items ) < 2 { continue }
+				if items[1] == "(incomplete)" { continue }
+				if items[1] == "<incomplete>" { continue }
+				if strings.Contains( items[0] , "(" ) == false { continue }
+				ip_address := strings.Split( strings.Split( items[0] , "(" )[1] , ")" )[0]
+				arp_result[ip_address] = items[1]
+			}
 		case "darwin":
-			result := exec_process( "/bin/bash" , "-c" , fmt.Sprintf( "arp -na -i %s | awk '{{print $2,$4}}'" , interface_name ) )
-			return result
+			arp_string := exec_process( "/bin/bash" , "-c" , fmt.Sprintf( "arp -na -i %s | awk '{{print $2,$4}}'" , interface_name ) )
+			lines := strings.Split( arp_string , "\n" )
+			for _ , line := range lines {
+				items := strings.Split( line , " " )
+				if len( items ) < 2 { continue }
+				if items[1] == "(incomplete)" { continue }
+				if items[1] == "<incomplete>" { continue }
+				if strings.Contains( items[0] , "(" ) == false { continue }
+				ip_address := strings.Split( strings.Split( items[0] , "(" )[1] , ")" )[0]
+				arp_result[ip_address] = items[1]
+			}
 		case "windows":
-			result := exec_process( `C:\Windows\System32\cmd.exe` , "/c" , "arp -a" )
-			return result
+			arp_string := exec_process( `C:\Windows\System32\cmd.exe` , "/c" , "arp -a" )
+			lines := strings.Split( arp_string , "\n" )
+			for _ , line := range lines {
+				if strings.Contains( line , "dynamic" ) == false { continue }
+				items := strings.Split( line , " " )
+				items = _remove_empty_strings( items )
+				if len( items ) < 3 { continue }
+				arp_result[items[ 0 ]] = items[ 1 ]
+			}
 	}
-	return result
-}
-
-func parse_arp_result( arp_string string ) ( arp_result ArpResult ) {
-	arp_result = ArpResult{}
-	lines := strings.Split( arp_string , "\n" )
-	for _ , line := range lines {
-		//fmt.Printf( "%s === %s \n" , strconv.Itoa( index ) , line )
-		items := strings.Split( line , " " )
-		if len( items ) < 2 { continue }
-		if items[1] == "(incomplete)" { continue }
-		if items[1] == "<incomplete>" { continue }
-		if strings.Contains( items[0] , "(" ) == false { continue }
-		ip_address := strings.Split( strings.Split( items[0] , "(" )[1] , ")" )[0]
-		arp_result[ip_address] = items[1]
-		//fmt.Printf( "%s === %s \n" , ip_address , items[1] )
-	}
-	return arp_result
+	return
 }
 
 func GetIPAddressFromMacAddress( interface_name string , mac_address string ) ( ip_address string ) {
 	default_gateway_ip , _ := default_gateway.DiscoverGateway()
 	nmap( default_gateway_ip.String() )
-	arp_result := parse_arp_result( arp_interface( interface_name ) )
+	arp_result := arp_interface( interface_name )
 	ip_address = arp_result[mac_address]
 	return
 }
@@ -179,7 +194,7 @@ func sort_local_network( arp_result ArpResult ) ( network_map [][2]string ) {
 func ScanLocalNetwork( interface_name string ) ( local_network [][2]string ) {
 	default_gateway_ip , _ := default_gateway.DiscoverGateway()
 	nmap( default_gateway_ip.String() )
-	arp_result := parse_arp_result( arp_interface( interface_name ) )
+	arp_result := arp_interface( interface_name )
 	local_network = sort_local_network( arp_result )
 	return
 }
