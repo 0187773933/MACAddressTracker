@@ -9,5 +9,10 @@
         "db": 0 ,
         "password": "asdfasdfasdfasdf" ,
         "prefix": "MACS."
+    } ,
+    "devices": {
+        "00:1c:42:8b:b1:55": "636597 Apple TV ?" ,
+        "10-E7-C6-2F-C5-88": "HP Elitedesk" ,
+        "14-9D-99-7D-63-2B": "636597 Mac Mini"
     }
 }

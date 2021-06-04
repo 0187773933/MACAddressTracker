@@ -7,7 +7,6 @@ import (
 	//"bytes"
 	//"os"
 	"os/exec"
-	//"strconv"
 	"strings"
 	"sort"
 	"strconv"
@@ -147,7 +146,19 @@ func arp_interface( interface_name string ) ( arp_result ArpResult ) {
 				if items[1] == "<incomplete>" { continue }
 				if strings.Contains( items[0] , "(" ) == false { continue }
 				ip_address := strings.Split( strings.Split( items[0] , "(" )[1] , ")" )[0]
-				arp_result[ip_address] = items[1]
+				mac_parts := strings.Split( items[ 1 ] , ":" )
+				fixed_mac_parts := []string{}
+				for index := range mac_parts {
+					// If its a number , 2 pad it
+					testnum , testnum_err := strconv.Atoi( mac_parts[ index ] )
+					if testnum_err == nil {
+						fixed_mac_parts = append( fixed_mac_parts , fmt.Sprintf( "%02d" , testnum ) )
+					} else {
+						fixed_mac_parts = append( fixed_mac_parts , mac_parts[ index ] )
+					}
+				}
+				mac_address := strings.Join( fixed_mac_parts , ":" )
+				arp_result[ip_address] = mac_address
 			}
 		case "windows":
 			arp_string := exec_process( `C:\Windows\System32\cmd.exe` , "/c" , "arp -a" )
@@ -159,8 +170,7 @@ func arp_interface( interface_name string ) ( arp_result ArpResult ) {
 				items = _remove_empty_strings( items )
 				if len( items ) < 3 { continue }
 				ip_address := items[ 0 ]
-				mac_address := strings.Join( strings.Split( items[ 1 ] , "-" ) , ":" )
-				arp_result[ip_address] = mac_address
+				arp_result[ip_address] = items[ 1 ]
 			}
 	}
 	return

@@ -15,3 +15,13 @@
 ```bash
 redis-cli -n 0 -p 6379 --no-auth-warning -a asdf KEYS "MACS.SEEN.*" | xargs redis-cli -n 0 -p 6379 --no-auth-warning -a asdf DEL
 ```
+
+```bash
+sudo crontab -e
+```
+```bash
+*/5 * * * * /bin/bash -l -c 'su morphs -c "/usr/local/bin/macAddressTracker"' >/dev/null 2>&1
+```
+```bash
+tail -f /var/log/syslog | grep 'CRON'
+```

@@ -7,8 +7,8 @@ import (
 
 func main() {
 	config := utils.GetConfig()
-	fmt.Println( config )
+	fmt.Println( config.Devices )
 	local_network := utils.ScanLocalNetwork( config )
-	utils.PrintLocalNetwork( config , local_network )
+	// utils.PrintLocalNetwork( config , local_network )
 	utils.TrackChanges( config , local_network )
 }
