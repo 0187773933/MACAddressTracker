@@ -26,6 +26,7 @@ type ConfigFile struct {
 	Latitude string "json:latitude"
 	Longitude string "json:longitude"
 	ServerPort string `json:"server_port"`
+	SavedRecordTotal int `json:"saved_record_total"`
 	NetworkHardWareInterfaceName string `json:"network_hardware_interface_name"`
 	Redis RedisConnectionInfo `json:"redis"`
 }
@@ -156,37 +157,42 @@ func TrackChanges( config ConfigFile , network_map [][2]string ) {
 
 	all_seen_at_time := time.Now()
 	all_seen_at_time_string := GetFormattedTimeString( all_seen_at_time )
+	var record_cutoff int
+	if config.SavedRecordTotal == 0 { record_cutoff = 100 } else { record_cutoff = config.SavedRecordTotal }
 	for index := range network_map {
 		ip := network_map[index][0]
 		mac := network_map[index][1]
 		mac_hostname_key := fmt.Sprintf( "%sNETWORK.%s.%s" , config.Redis.Prefix , config.LocationName , mac )
 		fmt.Printf( "%d === %s === %s === %s\n" , index , ip , mac , mac_hostname_key )
 
-		// Build A DB Item with MetaData and Stuff , Or Update Previously Existing Entry
+		// 1.) Metadata
+		// Retrieve Previously Existing Entry OR ,
+		// Build A DB Item with MetaData and Stuff
 		db_item_key := fmt.Sprintf( "%sSEEN.%s" , config.Redis.Prefix , mac )
 		var record MacAddressRecord
 		if RedisKeyExists( redis , db_item_key ) == true {
 			existing_db_entry_json := redis.Get( db_item_key )
 			json_unmarshal_error := json.Unmarshal( []byte( existing_db_entry_json ) , &record )
 			if json_unmarshal_error != nil { panic( json_unmarshal_error ) }
-			// Perform Update
+		} else { record = MacAddressRecord{} }
 
-		} else {
-			record = MacAddressRecord{}
-		}
+		// Set Values
 		record.CurrentTimeString = all_seen_at_time_string
-		fmt.Println( db_item_key )
-		// json_marshal_result , json_marshal_error := json.Marshal( test_data )
-		// fmt.Println( reflect.TypeOf( json_marshal_result ) )
-		// if json_marshal_error != nil { panic( json_marshal_error ) }
-		// json_string := string( json_marshal_result )
+		record.Records = append( record.Records , fmt.Sprintf( "%s === %s" , config.LocationName , all_seen_at_time_string ) )
+		if len( record.Records ) > record_cutoff { record.Records = record.Records[1:] }
+		fmt.Println( record )
+		// fmt.Println( record.Transitions )
+
+		// Restore into Redis
 		json_string := JSONStringify( record )
 		redis.Set( db_item_key , json_string )
 
-		// 1.) Store Snapshot as Set of 'Latest' IP's
+
+
+		// 2.) Store Snapshot as Set of 'Latest' IP's
 		redis.Redis.SAdd( ctx , network_latest_set_key , ip )
 
-		// 2.) Store Snapshot of S
+		// 3.) Store Snapshot of S
 		// redis.ListPushRight(  )
 	}
 }
