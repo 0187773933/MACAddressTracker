@@ -1,0 +1,12 @@
+{
+    "location_name": "1234 Merily Way" ,
+    "server_port": "1234" ,
+    "network_hardware_interface_name": "en0" ,
+    "redis": {
+        "host": "11.22.33.44" ,
+        "port": "6379" ,
+        "db": 0 ,
+        "password": "asdfasdfasdfasdf" ,
+        "prefix": "MACS."
+    }
+}
