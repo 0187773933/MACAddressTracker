@@ -252,4 +252,4 @@ func ScanLocalNetwork( interface_name string ) ( local_network [][2]string ) {
 	arp_result := arp_interface( interface_name )
 	local_network = sort_local_network( arp_result )
 	return
-}+
+}
