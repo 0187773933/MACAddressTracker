@@ -5,6 +5,7 @@ sudo docker build -t $name .
 id=$(sudo docker run -dit --restart='always' \
 --name $name \
 --net=host \
+--privileged \
 -v ${PWD}/config.json:"/home/morphs/.config/personal/mac_address_tracker.json" \
 $name)
 sudo docker logs -f $id

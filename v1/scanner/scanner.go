@@ -117,11 +117,11 @@ func nmap( gateway_ip string ) ( result string ) {
 	result = "failed"
 	switch runtime.GOOS {
 		case "linux":
-			nmap_command := fmt.Sprintf( "nmap -sn %s/24" , gateway_ip )
+			nmap_command := fmt.Sprintf( "sudo nmap -sn %s/24" , gateway_ip )
 			result := exec_process( "/bin/bash" , "-c" , nmap_command )
 			return result
 		case "darwin":
-			nmap_command := fmt.Sprintf( "nmap -sP %s/24" , gateway_ip )
+			nmap_command := fmt.Sprintf( "sudo nmap -sP %s/24" , gateway_ip )
 			result := exec_process( "/bin/bash" , "-c" , nmap_command )
 			return result
 		case "windows":
