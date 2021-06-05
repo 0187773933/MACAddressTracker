@@ -214,7 +214,7 @@ func arp_interface( interface_name string ) ( arp_result ArpResult ) {
 func GetIPAddressFromMacAddress( interface_name string , mac_address string ) ( ip_address string ) {
 	default_gateway_ip , _ := default_gateway.DiscoverGateway()
 	clear_arp_cache( default_gateway_ip.String() )
-	time.Sleep( 30 * time.Second() )
+	time.Sleep( 30 * time.Second )
 	nmap( default_gateway_ip.String() )
 	arp_result := arp_interface( interface_name )
 	ip_address = arp_result[mac_address]
