@@ -27,15 +27,19 @@ tail -f /var/log/syslog | grep 'CRON'
 ```
 
 ```bash
+#!/bin/bash
 name="mac-address-tracker"
+sudo docker rm $name -f || echo ""
+sudo docker build -t $name .
 id=$(sudo docker run -dit --restart='always' \
---name public-homebridge \
+--name $name \
 --net=host \
--v ./config.json:/home/morphs/.config/personal/mac_address_tracker.json \
-public-homebridge)
+-v ${PWD}/config.json:"/home/morphs/.config/personal/mac_address_tracker.json" \
+$name)
 sudo docker logs -f $id
 ```
 
+### Can't Figure out Environment Variables from docker run --> go binary --> os.Getenv()
 ```bash
 name="mac-address-tracker"
 id=$(sudo docker run -dit --restart='always' \
