@@ -102,7 +102,7 @@ func GetFormattedTimeString( time_object time.Time ) ( result string ) {
 }
 
 func ScanLocalNetwork( config ConfigFile ) ( network_map [][2]string ) {
-	fmt.Println( "Scanning Local Network" )
+	fmt.Printf( "\nScanning Local Network\n" )
 	// https://stackoverflow.com/questions/40260599/difference-between-two-time-time-objects
 	start_time := time.Now()
 	start_time_string := GetFormattedTimeString( start_time )

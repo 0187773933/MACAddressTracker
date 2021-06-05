@@ -30,7 +30,7 @@ RUN apt-get install iputils-ping -y
 # RUN apt-get install golang-go -y
 
 RUN apt-get install nmap -y
-
+ENV TZ="US/Eastern"
 ARG USERNAME="morphs"
 ARG PASSWORD="asdf"
 RUN useradd -m $USERNAME -p $PASSWORD -s "/bin/bash"

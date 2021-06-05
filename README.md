@@ -66,3 +66,8 @@ redis-cli -n 0 -p 6379 --no-auth-warning -a asdf
 ```bash
 set MACS.SEEN.a1:b2:c3:d4:a2:b2  "{\"device_name\":\"asdf cellphone\",\"current_time_string\":null,\"records\":null,\"transitions\":null}"
 ```
+
+```bash
+echo "nameserver 8.8.8.8" > sudo tee /etc/resolv.conf && \
+sudo apt-get install --reinstall resolvconf network-manager libnss-resolve
+```
