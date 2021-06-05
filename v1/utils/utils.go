@@ -57,10 +57,10 @@ func ParseConfigENV() ( result ConfigFile ) {
 	result.CronString = os.Getenv( "MAC_CRON_STRING" )
 	result.Latitude = os.Getenv( "MAC_LATITUDE" )
 	result.Longitude = os.Getenv( "MAC_LONGITUDE" )
-	result.ServerPort = os.Getenv( "MAC_SERVER_PORT" )
+
 	saved_record_total , _ := strconv.Atoi( os.Getenv( "MAC_SAVED_RECORD_TOTAL" ) )
 	result.SavedRecordTotal = saved_record_total
-	result.NetworkHardWareInterfaceName = os.Getenv( "MAC_SERVER_PORT" )
+	result.NetworkHardWareInterfaceName = os.Getenv( "MAC_NETWORK_HARDWARE_INTERFACE_NAME" )
 	result.Redis.Host = os.Getenv( "MAC_REDIS_HOST" )
 	result.Redis.Port = os.Getenv( "MAC_REDIS_PORT" )
 	db , _ := strconv.Atoi( os.Getenv( "MAC_REDIS_DB" ) )
