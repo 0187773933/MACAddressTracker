@@ -132,7 +132,7 @@ func GetConfig() ( config ConfigFile ) {
 		home_directory , _ := os.UserHomeDir()
 		config_file_path = filepath.Join( home_directory , ".config" , "personal" , "mac_address_tracker.json" )
 		if FileExists( config_file_path ) == false {
-			if os.Getenv( "MAC_LOCATION_NAME" ) == nil {
+			if os.Getenv( "MAC_LOCATION_NAME" ) == "" {
 				fmt.Println( "Pass filepath as argv1 or populate ~/.config/personal/mac_address_tracker.json" )
 				panic( "Can't Locate Config File Anywhere" )
 			}
