@@ -50,6 +50,20 @@ func ParseConfig( file_path string ) ( result ConfigFile ) {
 	result.Devices = cleaned_devices
 	return
 }
+func ParseConfigENV() ( result ConfigFile ) {
+	result.LocationName = os.Getenv( "MAC_LOCATION_NAME" )
+	result.Latitude = os.Getenv( "MAC_SERVER_PORT" )
+	result.Longitude = os.Getenv( "MAC_SERVER_PORT" )
+	result.ServerPort = os.Getenv( "MAC_SERVER_PORT" )
+	result.SavedRecordTotal = os.Getenv( "MAC_SERVER_PORT" )
+	result.NetworkHardWareInterfaceName = os.Getenv( "MAC_SERVER_PORT" )
+	result.Redis.Host = os.Getenv( "MAC_REDIS_HOST" )
+	result.Redis.Port = os.Getenv( "MAC_REDIS_PORT" )
+	result.Redis.DB = os.Getenv( "MAC_REDIS_DB" )
+	result.Redis.Password = os.Getenv( "MAC_REDIS_PASSWORD" )
+	result.Redis.Prefix = os.Getenv( "MAC_REDIS_PREFIX" )
+	return
+}
 
 // func GetRedisConnection( info RedisConnectionInfo ) ( redis_client *redis_lib.Client ) {
 // 	redis_client = redis_lib.NewClient( &redis_lib.Options{
@@ -113,13 +127,20 @@ func GetConfig() ( config ConfigFile ) {
 		home_directory , _ := os.UserHomeDir()
 		config_file_path = filepath.Join( home_directory , ".config" , "personal" , "mac_address_tracker.json" )
 		if FileExists( config_file_path ) == false {
-			fmt.Println( "Pass filepath as argv1 or populate ~/.config/personal/mac_address_tracker.json" )
-			panic( "Can't Locate Config File Anywhere" )
+			if os.Getenv( "MAC_LOCATION_NAME" ) == nil {
+				fmt.Println( "Pass filepath as argv1 or populate ~/.config/personal/mac_address_tracker.json" )
+				panic( "Can't Locate Config File Anywhere" )
+			}
+			config_file_path = "ENV"
 		}
 	} else {
 		config_file_path , _ = filepath.Abs( os.Args[ 1 ] )
 	}
-	config = ParseConfig( config_file_path )
+	if config_file_path == "ENV" {
+		config = ParseConfigENV()
+	} else {
+		config = ParseConfig( config_file_path )
+	}
 	fmt.Println( config_file_path )
 	return
 }
@@ -151,8 +172,6 @@ func JSONStringify( object interface{} ) ( json_string string ) {
 type MacAddressRecord struct {
 	DeviceName string `json:"device_name"`
 	CurrentTimeString string `json:"current_time_string"`
-	CurrentLocation string `json:"current_location"`
-	LastLocation string `json:"last_location"`
 	Records []string `json:"records"`
 	Transitions []string `json:"transitions"`
 }
