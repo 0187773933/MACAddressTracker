@@ -142,9 +142,9 @@ func arp_interface( interface_name string ) ( arp_result ArpResult ) {
 					testnum , testnum_err := strconv.Atoi( mac_parts[ index ] )
 					if testnum_err == nil {
 						fixed_mac_parts = append( fixed_mac_parts , fmt.Sprintf( "%02d" , testnum ) )
-					} else if len( mac_parts[ index ] == 1 ) {
+					} else if len( mac_parts[ index ] ) == 1 {
 						fixed_mac_parts = append( fixed_mac_parts , fmt.Sprintf( "0%s" , mac_parts[ index ] ) )
-					else {
+					} else {
 						fixed_mac_parts = append( fixed_mac_parts , mac_parts[ index ] )
 					}
 				}
@@ -168,9 +168,9 @@ func arp_interface( interface_name string ) ( arp_result ArpResult ) {
 					testnum , testnum_err := strconv.Atoi( mac_parts[ index ] )
 					if testnum_err == nil {
 						fixed_mac_parts = append( fixed_mac_parts , fmt.Sprintf( "%02d" , testnum ) )
-					} else if len( mac_parts[ index ] == 1 ) {
+					} else if len( mac_parts[ index ] ) == 1 {
 						fixed_mac_parts = append( fixed_mac_parts , fmt.Sprintf( "0%s" , mac_parts[ index ] ) )
-					else {
+					} else {
 						fixed_mac_parts = append( fixed_mac_parts , mac_parts[ index ] )
 					}
 				}
