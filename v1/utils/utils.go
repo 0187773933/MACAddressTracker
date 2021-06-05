@@ -24,6 +24,7 @@ type RedisConnectionInfo struct {
 }
 type ConfigFile struct {
 	LocationName string `json:"location_name"`
+	CronString string `json:"cron_string"`
 	Latitude string "json:latitude"
 	Longitude string "json:longitude"
 	ServerPort string `json:"server_port"`
@@ -53,7 +54,7 @@ func ParseConfig( file_path string ) ( result ConfigFile ) {
 }
 func ParseConfigENV() ( result ConfigFile ) {
 	result.LocationName = os.Getenv( "MAC_LOCATION_NAME" )
-
+	result.CronString = os.Getenv( "MAC_CRON_STRING" )
 	result.Latitude = os.Getenv( "MAC_LATITUDE" )
 	result.Longitude = os.Getenv( "MAC_LONGITUDE" )
 	result.ServerPort = os.Getenv( "MAC_SERVER_PORT" )
@@ -61,7 +62,6 @@ func ParseConfigENV() ( result ConfigFile ) {
 	result.SavedRecordTotal = saved_record_total
 	result.NetworkHardWareInterfaceName = os.Getenv( "MAC_SERVER_PORT" )
 	result.Redis.Host = os.Getenv( "MAC_REDIS_HOST" )
-
 	result.Redis.Port = os.Getenv( "MAC_REDIS_PORT" )
 	db , _ := strconv.Atoi( os.Getenv( "MAC_REDIS_DB" ) )
 	result.Redis.DB = db
@@ -146,6 +146,7 @@ func GetConfig() ( config ConfigFile ) {
 	} else {
 		config = ParseConfig( config_file_path )
 	}
+	if config.CronString == "" { config.CronString = "@every 5m" }
 	fmt.Println( config_file_path )
 	return
 }

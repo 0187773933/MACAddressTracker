@@ -1,5 +1,6 @@
 {
     "location_name": "1234 Merily Way" ,
+    "cron_string": "@every 5m" ,
     "server_port": "1234" ,
     "network_hardware_interface_name": "en0" ,
     "saved_record_total": 100 ,

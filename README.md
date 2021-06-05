@@ -25,3 +25,12 @@ sudo crontab -e
 ```bash
 tail -f /var/log/syslog | grep 'CRON'
 ```
+
+```bash
+name="mac-address-tracker"
+id=$(sudo docker run -dit --restart='always' \
+--name public-homebridge \
+--net=host \
+public-homebridge)
+sudo docker logs -f $id
+```
