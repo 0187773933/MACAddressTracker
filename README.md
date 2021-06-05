@@ -31,6 +31,16 @@ name="mac-address-tracker"
 id=$(sudo docker run -dit --restart='always' \
 --name public-homebridge \
 --net=host \
+-v ./config.json:/home/morphs/.config/personal/mac_address_tracker.json \
+public-homebridge)
+sudo docker logs -f $id
+```
+
+```bash
+name="mac-address-tracker"
+id=$(sudo docker run -dit --restart='always' \
+--name public-homebridge \
+--net=host \
 -e MAC_LOCATION_NAME="1234 Merily Way" \
 -e MAC_CRON_STRING="@every 5m" \
 -e MAC_SERVER_PORT="1234" \
@@ -44,3 +54,4 @@ id=$(sudo docker run -dit --restart='always' \
 public-homebridge)
 sudo docker logs -f $id
 ```
+

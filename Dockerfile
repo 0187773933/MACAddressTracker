@@ -75,7 +75,20 @@ WORKDIR /home/$USERNAME/MACAddressTracker
 RUN /usr/local/go/bin/go build -o macAddressTracker
 RUN chmod +x ./macAddressTracker
 RUN sudo cp ./macAddressTracker /usr/bin/
+RUN mkdir -p ~/.config
+RUN mkdir -p ~/.config/personal
 
 # ENTRYPOINT [ "/bin/bash" ]
 # RUN /home/$USERNAME/MACAddressTracker/build.sh
+
+
+# Name too Long
+# ENTRYPOINT [ "MAC_LOCATION_NAME=$MAC_LOCATION_NAME \
+# MAC_CRON_STRING=$MAC_CRON_STRING MAC_SERVER_PORT=$MAC_SERVER_PORT \
+# MAC_SAVED_RECORD_TOTAL=$MAC_SAVED_RECORD_TOTAL \
+# MAC_NETWORK_HARDWARE_INTERFACE_NAME=$MAC_NETWORK_HARDWARE_INTERFACE_NAME \
+# MAC_REDIS_HOST=$MAC_REDIS_HOST MAC_REDIS_PORT=$MAC_REDIS_PORT MAC_REDIS_DB=$MAC_REDIS_DB \
+# MAC_REDIS_PASSWORD=$MAC_REDIS_PASSWORD MAC_REDIS_PREFIX=$MAC_REDIS_PREFIX \
+# /usr/bin/macAddressTracker" ]
+
 ENTRYPOINT [ "/usr/bin/macAddressTracker" ]
