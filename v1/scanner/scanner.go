@@ -40,9 +40,11 @@ func exec_process( bash_command string , arguments ...string ) ( result string )
 }
 
 func clear_arp_cache( default_gateway_ip string ) ( result string ) {
+
 	result = "failed"
 	switch runtime.GOOS {
 		case "linux":
+			fmt.Println( "Clearing ARP Cache" )
 			// exec_process( "/bin/bash" , "-c" , fmt.Sprintf( "sudo arp -d %s" , default_gateway_ip ) )
 			result := exec_process( "/bin/bash" , "-c" , "sudo ip -s -s neigh flush all" )
 			return result
@@ -247,9 +249,10 @@ func ScanLocalNetwork( interface_name string ) ( local_network [][2]string ) {
 	default_gateway_ip , _ := default_gateway.DiscoverGateway()
 	fmt.Printf( "Nmapping : %s\n" , default_gateway_ip.String() )
 	clear_arp_cache( default_gateway_ip.String() )
+	time.Sleep( 3 * time.Second )
 	nmap( default_gateway_ip.String() )
-	fmt.Println( "Waiting 30 Seconds for nmap'd MAC Addresses To 'Complete'" )
-	time.Sleep( 30 * time.Second )
+	fmt.Println( "Waiting 3 Seconds for nmap'd MAC Addresses To 'Complete'" )
+	time.Sleep( 3 * time.Second )
 	fmt.Printf( "ARPing : %s\n" , interface_name )
 	arp_result := arp_interface( interface_name )
 	local_network = sort_local_network( arp_result )
