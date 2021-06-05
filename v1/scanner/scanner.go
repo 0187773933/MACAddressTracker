@@ -38,6 +38,24 @@ func exec_process( bash_command string , arguments ...string ) ( result string )
 	return
 }
 
+func clear_arp_cache( default_gateway_ip string ) ( result string ) {
+	result = "failed"
+	switch runtime.GOOS {
+		case "linux":
+			exec_process( "/bin/bash" , "-c" , fmt.Sprintf( "sudo arp -d %s" , default_gateway_ip ) )
+			result := exec_process( "/bin/bash" , "-c" , "sudo ip -s -s neigh flush all" )
+			return result
+		case "darwin":
+			result := exec_process( "/bin/bash" , "-c" , "sudo arp -a -d" )
+			return result
+		case "windows":
+			nmap_command := fmt.Sprintf( "nmap -sP %s/24" , gateway_ip )
+			result := exec_process( `C:\Windows\System32\cmd.exe` , "/c" , nmap_command )
+			return result
+	}
+	return result
+}
+
 // Exec Function Style 2
 // CombinedOutput???
 func get_net_mask(deviceName string) string {
@@ -196,6 +214,7 @@ func arp_interface( interface_name string ) ( arp_result ArpResult ) {
 func GetIPAddressFromMacAddress( interface_name string , mac_address string ) ( ip_address string ) {
 	default_gateway_ip , _ := default_gateway.DiscoverGateway()
 	nmap( default_gateway_ip.String() )
+	clear_arp_cache( default_gateway_ip.String() )
 	arp_result := arp_interface( interface_name )
 	ip_address = arp_result[mac_address]
 	return
