@@ -242,7 +242,11 @@ func sort_local_network( arp_result ArpResult ) ( network_map [][2]string ) {
 
 func ScanLocalNetwork( interface_name string ) ( local_network [][2]string ) {
 	default_gateway_ip , _ := default_gateway.DiscoverGateway()
+	fmt.Printf( "Nmapping : %s\n" , default_gateway_ip.String() )
 	nmap( default_gateway_ip.String() )
+	fmt.Println( "Waiting 30 Seconds for MAC Addresses To 'Complete'" )
+	time.Sleep( 30 * time.Second )
+	fmt.Printf( "ARPing : %s\n" , interface_name )
 	arp_result := arp_interface( interface_name )
 	local_network = sort_local_network( arp_result )
 	return
