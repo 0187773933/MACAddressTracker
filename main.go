@@ -26,6 +26,8 @@ func main() {
 		context.Set( fiber.HeaderContentType , fiber.MIMETextHTML )
 		return context.SendString( "<html><h1>ok</h1></html>" )
 	})
-	result := app.Listen( fmt.Sprintf( ":%s" , config.ServerPort ) )
+	port := fmt.Sprintf( ":%s" , config.ServerPort )
+	fmt.Printf( "Listening on %s\n" , port )
+	result := app.Listen( port )
 	fmt.Println( result )
 }
