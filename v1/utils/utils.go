@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"encoding/json"
 	"path/filepath"
+	"strconv"
 	"context"
 	"time"
 	"strings"
@@ -52,14 +53,18 @@ func ParseConfig( file_path string ) ( result ConfigFile ) {
 }
 func ParseConfigENV() ( result ConfigFile ) {
 	result.LocationName = os.Getenv( "MAC_LOCATION_NAME" )
-	result.Latitude = os.Getenv( "MAC_SERVER_PORT" )
-	result.Longitude = os.Getenv( "MAC_SERVER_PORT" )
+
+	result.Latitude = os.Getenv( "MAC_LATITUDE" )
+	result.Longitude = os.Getenv( "MAC_LONGITUDE" )
 	result.ServerPort = os.Getenv( "MAC_SERVER_PORT" )
-	result.SavedRecordTotal = os.Getenv( "MAC_SERVER_PORT" )
+	saved_record_total , _ := strconv.Atoi( os.Getenv( "MAC_SAVED_RECORD_TOTAL" ) )
+	result.SavedRecordTotal = saved_record_total
 	result.NetworkHardWareInterfaceName = os.Getenv( "MAC_SERVER_PORT" )
 	result.Redis.Host = os.Getenv( "MAC_REDIS_HOST" )
+
 	result.Redis.Port = os.Getenv( "MAC_REDIS_PORT" )
-	result.Redis.DB = os.Getenv( "MAC_REDIS_DB" )
+	db , _ := strconv.Atoi( os.Getenv( "MAC_REDIS_DB" ) )
+	result.Redis.DB = db
 	result.Redis.Password = os.Getenv( "MAC_REDIS_PASSWORD" )
 	result.Redis.Prefix = os.Getenv( "MAC_REDIS_PREFIX" )
 	return
