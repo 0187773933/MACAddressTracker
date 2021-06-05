@@ -43,14 +43,16 @@ func clear_arp_cache( default_gateway_ip string ) ( result string ) {
 	result = "failed"
 	switch runtime.GOOS {
 		case "linux":
-			exec_process( "/bin/bash" , "-c" , fmt.Sprintf( "sudo arp -d %s" , default_gateway_ip ) )
+			// exec_process( "/bin/bash" , "-c" , fmt.Sprintf( "sudo arp -d %s" , default_gateway_ip ) )
 			result := exec_process( "/bin/bash" , "-c" , "sudo ip -s -s neigh flush all" )
 			return result
 		case "darwin":
-			result := exec_process( "/bin/bash" , "-c" , "sudo arp -a -d" )
+			// result := exec_process( "/bin/bash" , "-c" , "sudo arp -a -d" )
+			result = "unsupported"
 			return result
 		case "windows":
-			result := exec_process( `C:\Windows\System32\cmd.exe` , "/c" , fmt.Sprintf( "arp -d %s" , default_gateway_ip ) )
+			// result := exec_process( `C:\Windows\System32\cmd.exe` , "/c" , fmt.Sprintf( "arp -d %s" , default_gateway_ip ) )
+			result = "unsupported"
 			return result
 	}
 	return result
@@ -117,11 +119,11 @@ func nmap( gateway_ip string ) ( result string ) {
 	result = "failed"
 	switch runtime.GOOS {
 		case "linux":
-			nmap_command := fmt.Sprintf( "sudo nmap -sn %s/24" , gateway_ip )
+			nmap_command := fmt.Sprintf( "nmap -sn %s/24" , gateway_ip )
 			result := exec_process( "/bin/bash" , "-c" , nmap_command )
 			return result
 		case "darwin":
-			nmap_command := fmt.Sprintf( "sudo nmap -sP %s/24" , gateway_ip )
+			nmap_command := fmt.Sprintf( "nmap -sP %s/24" , gateway_ip )
 			result := exec_process( "/bin/bash" , "-c" , nmap_command )
 			return result
 		case "windows":
