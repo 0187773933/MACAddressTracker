@@ -3,11 +3,11 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update -y
 RUN apt-get install apt-transport-https -y
 RUN apt-get install apt-utils -y
-# RUN apt-get install gcc -y
-# RUN apt-get install g++ -y
+RUN apt-get install gcc -y
+RUN apt-get install g++ -y
 RUN apt-get install nano -y
-# RUN apt-get install tar -y
-# RUN apt-get install file -y
+RUN apt-get install tar -y
+RUN apt-get install file -y
 RUN apt-get install bash -y
 RUN apt-get install sudo -y
 # RUN apt-get install openssl -y
@@ -24,9 +24,9 @@ RUN apt-get install bc -y
 # RUN apt-get install python3-dev -y
 # RUN apt-get install python3-setuptools -y
 # RUN apt-get install python -y
-# RUN apt-get install net-tools -y
-# RUN apt-get install iproute2 -y
-# RUN apt-get install iputils-ping -y
+RUN apt-get install net-tools -y
+RUN apt-get install iproute2 -y
+RUN apt-get install iputils-ping -y
 # RUN apt-get install golang-go -y
 ARG USERNAME="morphs"
 ARG PASSWORD="asdf"
@@ -72,10 +72,10 @@ WORKDIR /home/$USERNAME/MACAddressTracker
 # RUN /usr/local/go/bin/go version
 # RUN /usr/local/go/bin/go clean -cache -modcache -i -r
 # RUN /usr/local/go/bin/go get all
-# RUN /usr/local/go/bin/go build -o macAddressTracker
-# RUN chmod +x ./macAddressTracker
-# RUN sudo cp ./macAddressTracker /usr/bin/
+RUN /usr/local/go/bin/go build -o macAddressTracker
+RUN chmod +x ./macAddressTracker
+RUN sudo cp ./macAddressTracker /usr/bin/
 
 # ENTRYPOINT [ "/bin/bash" ]
-RUN /home/$USERNAME/MACAddressTracker/build.sh
+# RUN /home/$USERNAME/MACAddressTracker/build.sh
 ENTRYPOINT [ "/usr/bin/macAddressTracker" ]
