@@ -6,6 +6,7 @@ import (
 	//"io"
 	//"bytes"
 	//"os"
+	"time"
 	"os/exec"
 	"strings"
 	"sort"
@@ -49,8 +50,7 @@ func clear_arp_cache( default_gateway_ip string ) ( result string ) {
 			result := exec_process( "/bin/bash" , "-c" , "sudo arp -a -d" )
 			return result
 		case "windows":
-			nmap_command := fmt.Sprintf( "nmap -sP %s/24" , default_gateway_ip )
-			result := exec_process( `C:\Windows\System32\cmd.exe` , "/c" , nmap_command )
+			result := exec_process( `C:\Windows\System32\cmd.exe` , "/c" , fmt.Sprintf( "arp -d %s" , default_gateway_ip ) )
 			return result
 	}
 	return result
