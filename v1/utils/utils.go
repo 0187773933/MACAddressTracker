@@ -151,6 +151,8 @@ func JSONStringify( object interface{} ) ( json_string string ) {
 type MacAddressRecord struct {
 	DeviceName string `json:"device_name"`
 	CurrentTimeString string `json:"current_time_string"`
+	CurrentLocation string `json:"current_location"`
+	LastLocation string `json:"last_location"`
 	Records []string `json:"records"`
 	Transitions []string `json:"transitions"`
 }
