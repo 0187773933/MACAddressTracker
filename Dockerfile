@@ -69,11 +69,13 @@ RUN git clone https://github.com/0187773933/MACAddressTracker.git
 WORKDIR /home/$USERNAME/MACAddressTracker
 
 # RUN echo "export PATH=$PATH:/usr/local/go/bin" | sudo tee -a /etc/environment
-RUN /usr/local/go/bin/go version
+# RUN /usr/local/go/bin/go version
 # RUN /usr/local/go/bin/go clean -cache -modcache -i -r
-RUN /usr/local/go/bin/go get all
-RUN /usr/local/go/bin/go build -o macAddressTracker
-RUN chmod +x ./macAddressTracker
-RUN sudo cp ./macAddressTracker /usr/bin/
+# RUN /usr/local/go/bin/go get all
+# RUN /usr/local/go/bin/go build -o macAddressTracker
+# RUN chmod +x ./macAddressTracker
+# RUN sudo cp ./macAddressTracker /usr/bin/
 
-ENTRYPOINT [ "/bin/bash" ]
+# ENTRYPOINT [ "/bin/bash" ]
+RUN /home/$USERNAME/MACAddressTracker/build.sh
+ENTRYPOINT [ "/usr/bin/macAddressTracker" ]
