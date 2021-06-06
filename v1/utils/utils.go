@@ -221,7 +221,7 @@ func TrackChanges( config ConfigFile , network_map [][2]string ) {
 			if record.CurrentLocation != "" {
 				if record.CurrentLocation != config.LocationName {
 					fmt.Printf( "%s === %s === Transition Detected === FROM === %s === TO === %s\n" , mac , record.DeviceName , record.CurrentLocation , config.LocationName )
-					record.Transitions = append( record.Transitions , fmt.Sprintf( "FROM === %s === TO === %s" , record.CurrentLocation , config.LocationName ) )
+					record.Transitions = append( record.Transitions , fmt.Sprintf( "FROM === %s === TO === %s === AT === %s" , record.CurrentLocation , config.LocationName , all_seen_at_time_string ) )
 					record.CurrentLocation = config.LocationName
 				}
 			}
