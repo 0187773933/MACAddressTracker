@@ -90,3 +90,15 @@ sudo nano /etc/hosts
 ```bash
 pm2 start --interpreter none --name MacAddressTracker /home/morphs/DOCKER_IMAGES/MACAddressTracker/macAddressTracker -- /home/morphs/DOCKER_IMAGES/MACAddressTracker/config.json
 ```
+
+```bash
+#!/bin/bash
+id=(sudo docker run -dit --restart='always' \
+--name "mac-address-tracker" \
+--net=host \
+-v ${PWD}/config.json:"/home/morphs/.config/personal/mac_address_tracker.json" \
+xp6qhg9fmuolztbd2ixwdbtd1/mac-address-tracker)
+sudo docker logs -f $id
+```
+
+https://callistaenterprise.se/blogg/teknik/2017/12/28/multi-platform-docker-images/

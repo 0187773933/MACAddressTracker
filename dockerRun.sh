@@ -5,10 +5,19 @@ sudo docker build -t $name .
 id=$(sudo docker run -dit --restart='always' \
 --name $name \
 --net=host \
---privileged \
 -v ${PWD}/config.json:"/home/morphs/.config/personal/mac_address_tracker.json" \
 $name)
 sudo docker logs -f $id
+# --privileged \
+
+# #!/bin/bash
+# id=(sudo docker run -dit --restart='always' \
+# --name "mac-address-tracker" \
+# --net=host \
+# -v /home/morphs/.config/personal/mac_address_tracker.json:"/home/morphs/.config/personal/mac_address_tracker.json" \
+# xp6qhg9fmuolztbd2ixwdbtd1/mac-address-tracker)
+# sudo docker logs -f $id
+# --privileged \
 
 # sudo docker rm $name -f || echo ""
 # sudo docker build -t $name .

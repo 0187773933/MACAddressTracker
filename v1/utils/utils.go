@@ -191,6 +191,11 @@ func TrackChanges( config ConfigFile , network_map [][2]string ) {
 	network_latest_ip_set_key := fmt.Sprintf( "%sNETWORK.%s.LATEST.IPS" , config.Redis.Prefix , config.LocationName )
 	network_latest_mac_set_key := fmt.Sprintf( "%sNETWORK.%s.LATEST.MACS" , config.Redis.Prefix , config.LocationName )
 	network_latest_relationship_list_key := fmt.Sprintf( "%sNETWORK.%s.LATEST" , config.Redis.Prefix , config.LocationName )
+
+	// Need To Get Cache To Check For New Arrivals and Departures
+	// network_latest_ip_set_cached := redis.Get( network_latest_ip_set_key )
+	// network_latest_mac_set_cached := redis.Get( network_latest_mac_set_key )
+	// network_latest_relationship_list_cached := redis.Get( network_latest_relationship_list_key )
 	RedisKeyDelete( redis , network_latest_ip_set_key )
 	RedisKeyDelete( redis , network_latest_mac_set_key )
 	RedisKeyDelete( redis , network_latest_relationship_list_key )
