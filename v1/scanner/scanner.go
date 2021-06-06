@@ -218,7 +218,7 @@ func arp_interface( interface_name string ) ( arp_result ArpResult ) {
 func GetIPAddressFromMacAddress( interface_name string , mac_address string ) ( ip_address string ) {
 	default_gateway_ip , _ := default_gateway.DiscoverGateway()
 	clear_arp_cache( default_gateway_ip.String() )
-	time.Sleep( 30 * time.Second )
+	time.Sleep( 3 * time.Second )
 	nmap( default_gateway_ip.String() )
 	arp_result := arp_interface( interface_name )
 	ip_address = arp_result[mac_address]
@@ -249,10 +249,10 @@ func ScanLocalNetwork( interface_name string ) ( local_network [][2]string ) {
 	default_gateway_ip , _ := default_gateway.DiscoverGateway()
 	fmt.Printf( "Nmapping : %s\n" , default_gateway_ip.String() )
 	clear_arp_cache( default_gateway_ip.String() )
-	time.Sleep( 3 * time.Second )
+	// time.Sleep( 1 * time.Second )
 	nmap( default_gateway_ip.String() )
-	fmt.Println( "Waiting 3 Seconds for nmap'd MAC Addresses To 'Complete'" )
-	time.Sleep( 3 * time.Second )
+	// fmt.Println( "Waiting 3 Seconds for nmap'd MAC Addresses To 'Complete'" )
+	// time.Sleep( 3 * time.Second )
 	fmt.Printf( "ARPing : %s\n" , interface_name )
 	arp_result := arp_interface( interface_name )
 	local_network = sort_local_network( arp_result )
