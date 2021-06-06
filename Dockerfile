@@ -68,7 +68,10 @@ RUN /home/$USERNAME/go_install.sh
 # RUN sudo tar --record-size=10K --checkpoint=100 --checkpoint-action=exec='/bin/bash -c "cmd=$(echo ZXhwb3J0IEdPX1RBUl9LSUxPQllURVM9JChwcmludGYgIiUuM2ZcbiIgJChlY2hvICIkKHN0YXQgLS1mb3JtYXQ9IiVzIiAvaG9tZS9tb3JwaHMvZ28udGFyLmd6KSAvIDEwMDAiIHwgYmMgLWwpKSAmJiBlY2hvIEV4dHJhY3RpbmcgWyRUQVJfQ0hFQ0tQT0lOVF0gb2YgJEdPX1RBUl9LSUxPQllURVMga2lsb2J5dGVzIC91c3IvbG9jYWwvZ28= | base64 -d ; echo); eval $cmd"' -C /usr/local -xzf /home/$USERNAME/go.tar.gz
 # https://askubuntu.com/questions/1094519/tar-checkpoint-action-exec-write-to-file
 RUN sudo tar --checkpoint=100 --checkpoint-action=exec='/bin/bash -c "cmd=$(echo ZXhwb3J0IEdPX1RBUl9LSUxPQllURVM9JChwcmludGYgIiUuM2ZcbiIgJChlY2hvICIkKHN0YXQgLS1mb3JtYXQ9IiVzIiAvaG9tZS9tb3JwaHMvZ28udGFyLmd6KSAvIDEwMDAiIHwgYmMgLWwpKSAmJiBlY2hvIEV4dHJhY3RpbmcgWyRUQVJfQ0hFQ0tQT0lOVF0gb2YgJEdPX1RBUl9LSUxPQllURVMga2lsb2J5dGVzIC91c3IvbG9jYWwvZ28= | base64 -d ; echo); eval $cmd"' -C /usr/local -xzf /home/$USERNAME/go.tar.gz
-RUN git clone https://github.com/0187773933/MACAddressTracker.git
+# RUN git clone https://github.com/0187773933/MACAddressTracker.git
+# RUN mkdir -p /home/$USERNAME/MACAddressTracker
+COPY . /home/$USERNAME/MACAddressTracker
+RUN sudo chown $USERNAME:$USERNAME /home/$USERNAME/MACAddressTracker
 WORKDIR /home/$USERNAME/MACAddressTracker
 
 # RUN echo "export PATH=$PATH:/usr/local/go/bin" | sudo tee -a /etc/environment

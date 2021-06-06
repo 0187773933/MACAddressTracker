@@ -71,3 +71,22 @@ set MACS.SEEN.a1:b2:c3:d4:a2:b2  "{\"device_name\":\"asdf cellphone\",\"current_
 echo "nameserver 8.8.8.8" > sudo tee /etc/resolv.conf && \
 sudo apt-get install --reinstall resolvconf network-manager libnss-resolve
 ```
+
+
+```bash
+sudo nano /etc/resolv.conf
+nameserver 192.168.1.1
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+```
+
+```bash
+sudo nano /etc/hosts
+127.0.0.1 localhost
+127.0.1.1 mediabox
+```
+
+
+```bash
+pm2 start --interpreter none --name MacAddressTracker /home/morphs/DOCKER_IMAGES/MACAddressTracker/macAddressTracker -- /home/morphs/DOCKER_IMAGES/MACAddressTracker/config.json
+```

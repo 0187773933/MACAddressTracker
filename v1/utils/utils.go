@@ -178,6 +178,7 @@ func JSONStringify( object interface{} ) ( json_string string ) {
 type MacAddressRecord struct {
 	DeviceName string `json:"device_name"`
 	CurrentTimeString string `json:"current_time_string"`
+	CurrentLocation string `json:"current_location"`
 	Records []string `json:"records"`
 	Transitions []string `json:"transitions"`
 }
@@ -201,7 +202,7 @@ func TrackChanges( config ConfigFile , network_map [][2]string ) {
 	for index := range network_map {
 		ip := network_map[index][0]
 		mac := network_map[index][1]
-		mac_hostname_key := fmt.Sprintf( "%sNETWORK.%s.%s" , config.Redis.Prefix , config.LocationName , mac )
+		// mac_hostname_key := fmt.Sprintf( "%sNETWORK.%s.%s" , config.Redis.Prefix , config.LocationName , mac )
 		// fmt.Printf( "%d === %s === %s === %s\n" , index , ip , mac , mac_hostname_key )
 
 		// 1.) Metadata
@@ -210,16 +211,26 @@ func TrackChanges( config ConfigFile , network_map [][2]string ) {
 		db_item_key := fmt.Sprintf( "%sSEEN.%s" , config.Redis.Prefix , mac )
 		record := MacAddressRecord{}
 		if RedisKeyExists( redis , db_item_key ) == true {
-			fmt.Println( "record already exists" )
+			// fmt.Println( "record already exists" )
 			existing_db_entry_json := redis.Get( db_item_key )
 			json_unmarshal_error := json.Unmarshal( []byte( existing_db_entry_json ) , &record )
 			if json_unmarshal_error != nil { panic( json_unmarshal_error ) }
-			fmt.Println( record.DeviceName )
+			// fmt.Println( record.DeviceName )
+
+			// Detect Transition
+			if record.CurrentLocation != "" {
+				if record.CurrentLocation != config.LocationName {
+					fmt.Printf( "%s === %s === Transition Detected === FROM === %s === TO === %s\n" , mac , record.DeviceName , record.CurrentLocation , config.LocationName )
+					record.Transitions = append( record.Transitions , fmt.Sprintf( "FROM === %s === TO === %s" , record.CurrentLocation , config.LocationName ) )
+					record.CurrentLocation = config.LocationName
+				}
+			}
 		}
 
 		// Set Values
 		if config.Devices[ mac ] != "" { record.DeviceName = config.Devices[ mac ] }
 		record.CurrentTimeString = all_seen_at_time_string
+		record.CurrentLocation = config.LocationName
 		record.Records = append( record.Records , fmt.Sprintf( "%s === %s" , config.LocationName , all_seen_at_time_string ) )
 		if len( record.Records ) > record_cutoff { record.Records = record.Records[1:] }
 		// fmt.Println( record )
@@ -237,10 +248,10 @@ func TrackChanges( config ConfigFile , network_map [][2]string ) {
 		// 3.) Store Snapshot of IP-MAC Relationships
 		if record.DeviceName != "" {
 			redis.ListPushRight( network_latest_relationship_list_key , fmt.Sprintf( "%s===%s===%s" , ip , mac , record.DeviceName ) )
-			fmt.Printf( "%d === %s === %s === %s === %s\n" , index , ip , mac , mac_hostname_key , record.DeviceName )
+			fmt.Printf( "%d === %s === %s === %s === %s\n" , index , ip , mac , db_item_key , record.DeviceName )
 		} else {
 			redis.ListPushRight( network_latest_relationship_list_key , fmt.Sprintf( "%s===%s" , ip , mac ) )
-			fmt.Printf( "%d === %s === %s === %s\n" , index , ip , mac , mac_hostname_key )
+			fmt.Printf( "%d === %s === %s === %s\n" , index , ip , mac , db_item_key )
 		}
 
 	}
